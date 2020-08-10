@@ -5,12 +5,13 @@ import android.util.Log;
 import java.util.List;
 
 import cl.desafiolatam.pruebaperritosapp.model.IModel;
+import cl.desafiolatam.pruebaperritosapp.model.RazaImagen;
 
 public class Presenter implements IPresenter, IPresenterModel {
 
     private static final String TAG = "Presenter";
-    IModel imodel;
-    IPresenterViewList iPresenterViewList;
+    private IModel imodel;
+    private IPresenterViewList iPresenterViewList;
 
 
     public Presenter(IPresenterViewList iPresenterViewList) {
@@ -30,10 +31,12 @@ public class Presenter implements IPresenter, IPresenterModel {
     @Override
     public void loadBreedImages(String raza) {
 
+
     }
 
     @Override
     public void loadSubBreedImages(String raza, String subraza) {
+
 
     }
 

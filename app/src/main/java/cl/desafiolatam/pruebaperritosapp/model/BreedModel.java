@@ -14,7 +14,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class BreedModel  implements IModel {
-    IPresenterModel iPresenterModel;
+    private IPresenterModel iPresenterModel;
 
     public BreedModel(IPresenterModel iPresenterModel) {
         this.iPresenterModel = iPresenterModel;
@@ -45,7 +45,7 @@ public class BreedModel  implements IModel {
                     }
 
                 }
-                //Log.i("Valor", ""+listaPerros);
+                Log.i("Valor", ""+listaPerros);
                 iPresenterModel.notificar(listaPerros);
             }
 
@@ -60,6 +60,7 @@ public class BreedModel  implements IModel {
 
     @Override
     public void loadImages(String raza, String subRaza) {
+
         Log.d(TAG, "loadImages metodo no implementado");
     }
 }

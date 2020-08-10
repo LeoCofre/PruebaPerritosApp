@@ -1,36 +1,38 @@
 package cl.desafiolatam.pruebaperritosapp.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import cl.desafiolatam.pruebaperritosapp.R;
-import cl.desafiolatam.pruebaperritosapp.view.dummy.DummyContent;
-import cl.desafiolatam.pruebaperritosapp.view.dummy.DummyContent.DummyItem;
-
 import java.util.List;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
-public class ListDogFragment extends Fragment {
+import cl.desafiolatam.pruebaperritosapp.R;
+import cl.desafiolatam.pruebaperritosapp.model.BreedModel;
+import cl.desafiolatam.pruebaperritosapp.presenter.Presenter;
+
+
+public class ListDogFragment extends Fragment implements Presenter.IPresenterViewList {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+
+    RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -39,8 +41,6 @@ public class ListDogFragment extends Fragment {
     public ListDogFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static ListDogFragment newInstance(int columnCount) {
         ListDogFragment fragment = new ListDogFragment();
         Bundle args = new Bundle();
@@ -66,13 +66,15 @@ public class ListDogFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyListDogRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            Presenter presentador = new Presenter(this);
+            presentador.setImodel(new BreedModel(presentador));
+            presentador.loadBreeds();
         }
         return view;
     }
@@ -95,18 +97,23 @@ public class ListDogFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    @Override
+    public void notificar(List<String> lista) {
+        Log.d("Datos", ""+lista);
+        MyDogRecyclerViewAdapter myAdaptador = new MyDogRecyclerViewAdapter(lista, mListener );
+        recyclerView.setAdapter(myAdaptador);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        DetailFragment detalle = new DetailFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+    }
+
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(String raza);
     }
 }

@@ -32,7 +32,7 @@ public class ListDogFragment extends Fragment implements Presenter.IPresenterVie
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the

@@ -8,13 +8,15 @@ import java.util.Map;
 
 import cl.desafiolatam.pruebaperritosapp.model.api.IDogDataBase;
 import cl.desafiolatam.pruebaperritosapp.model.api.RetrofitClient;
+import cl.desafiolatam.pruebaperritosapp.presenter.IPresenterDetail;
 import cl.desafiolatam.pruebaperritosapp.presenter.IPresenterModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BreedModel  implements IModel {
+public class BreedModel implements IModel {
     private IPresenterModel iPresenterModel;
+    IPresenterDetail iPresenterDetail;
 
     public BreedModel(IPresenterModel iPresenterModel) {
         this.iPresenterModel = iPresenterModel;
@@ -45,7 +47,7 @@ public class BreedModel  implements IModel {
                     }
 
                 }
-                Log.i("Valor", ""+listaPerros);
+                Log.i("Valor", "" + listaPerros);
                 iPresenterModel.notificar(listaPerros);
             }
 
@@ -61,6 +63,25 @@ public class BreedModel  implements IModel {
     @Override
     public void loadImages(String raza, String subRaza) {
 
-        Log.d(TAG, "loadImages metodo no implementado");
+        IDogDataBase servicio = RetrofitClient.getRetrofitInstance().create(IDogDataBase.class);
+
+        Call<RazaImagen> listCall = servicio.listaImagenes(raza);
+        List<String> listaFotosPerros = new ArrayList<>();
+
+        listCall.enqueue(new Callback<RazaImagen>() {
+            @Override
+            public void onResponse(Call<RazaImagen> call, Response<RazaImagen> response) {
+                RazaImagen listaRazas = response.body();
+                List<String> lista = (List<String>) listaRazas.getMessage();
+
+                //Log.i("Valor", ""+listaPerros);
+                iPresenterModel.notificar(lista);
+            }
+
+            @Override
+            public void onFailure(Call<RazaImagen> call, Throwable t) {
+
+            }
+        });
     }
 }

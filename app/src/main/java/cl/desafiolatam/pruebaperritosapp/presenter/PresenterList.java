@@ -5,16 +5,16 @@ import android.util.Log;
 import java.util.List;
 
 import cl.desafiolatam.pruebaperritosapp.model.IModel;
-import cl.desafiolatam.pruebaperritosapp.model.RazaImagen;
 
-public class Presenter implements IPresenter, IPresenterModel {
+
+public class PresenterList implements IPresenterList, IPresenterModel {
 
     private static final String TAG = "Presenter";
-    private IModel imodel;
-    private IPresenterViewList iPresenterViewList;
+    IModel imodel;
+    IPresenterViewList iPresenterViewList;
 
 
-    public Presenter(IPresenterViewList iPresenterViewList) {
+    public PresenterList(IPresenterViewList iPresenterViewList) {
         this.iPresenterViewList = iPresenterViewList;
 
     }
@@ -29,18 +29,6 @@ public class Presenter implements IPresenter, IPresenterModel {
     }
 
     @Override
-    public void loadBreedImages(String raza) {
-
-
-    }
-
-    @Override
-    public void loadSubBreedImages(String raza, String subraza) {
-
-
-    }
-
-    @Override
     public void notificar(List<String> breeds) {
         Log.d(TAG, breeds.toString());
         iPresenterViewList.notificar(breeds);
@@ -49,5 +37,4 @@ public class Presenter implements IPresenter, IPresenterModel {
     public interface IPresenterViewList {
         void notificar(List<String> lista);
     }
-
 }

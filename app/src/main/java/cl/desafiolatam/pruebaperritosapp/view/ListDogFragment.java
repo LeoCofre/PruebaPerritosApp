@@ -1,30 +1,25 @@
 package cl.desafiolatam.pruebaperritosapp.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
 import cl.desafiolatam.pruebaperritosapp.R;
 import cl.desafiolatam.pruebaperritosapp.model.BreedModel;
-import cl.desafiolatam.pruebaperritosapp.presenter.Presenter;
+import cl.desafiolatam.pruebaperritosapp.presenter.PresenterList;
 
 
-public class ListDogFragment extends Fragment implements Presenter.IPresenterViewList {
+public class ListDogFragment extends Fragment implements PresenterList.IPresenterViewList {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -32,7 +27,8 @@ public class ListDogFragment extends Fragment implements Presenter.IPresenterVie
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
-    private RecyclerView recyclerView;
+    RecyclerView recyclerView;
+    MyDogRecyclerViewAdapter myAdaptador;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -72,23 +68,11 @@ public class ListDogFragment extends Fragment implements Presenter.IPresenterVie
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            Presenter presentador = new Presenter(this);
+            PresenterList presentador = new PresenterList(this);
             presentador.setImodel(new BreedModel(presentador));
             presentador.loadBreeds();
         }
         return view;
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -100,20 +84,21 @@ public class ListDogFragment extends Fragment implements Presenter.IPresenterVie
     @Override
     public void notificar(List<String> lista) {
         Log.d("Datos", ""+lista);
-        MyDogRecyclerViewAdapter myAdaptador = new MyDogRecyclerViewAdapter(lista, mListener );
+        myAdaptador = new MyDogRecyclerViewAdapter(lista);
         recyclerView.setAdapter(myAdaptador);
-    }
+        myAdaptador.setOnItemClickListener(new MyDogRecyclerViewAdapter.OnItemClickListener() {
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        DetailFragment detalle = new DetailFragment();
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
+            @Override
+            public void onItemClick(int position) {
+                Log.d("TAG", String.valueOf(position));
+                getActivity().getSupportFragmentManager().beginTransaction().add(R.id.mainFrameLayout, DetailDogFragment.newInstance(lista.get(position),""), "details")
+                .remove(getActivity().getSupportFragmentManager().findFragmentByTag("listaPerritos"))
+                .commit();
+            }
+        });
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(String raza);
+        void onListFragmentInteraction(int position);
     }
 }
